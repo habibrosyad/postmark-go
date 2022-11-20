@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/mattevans/postmark-go"
+	"github.com/habibrosyad/postmark-go"
 )
 
 func main() {

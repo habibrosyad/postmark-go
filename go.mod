@@ -1,3 +1,3 @@
-module github.com/mattevans/postmark-go
+module github.com/habibrosyad/postmark-go
 
-go 1.17
+go 1.19

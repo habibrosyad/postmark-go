@@ -6,9 +6,10 @@ import (
 )
 
 const (
-	emailAPIPath             = "email"
-	emailBatchAPIPath        = "email/batch"
-	emailWithTemplateAPIPath = "email/withTemplate"
+	emailAPIPath                  = "email"
+	emailBatchAPIPath             = "email/batch"
+	emailWithTemplateAPIPath      = "email/withTemplate"
+	emailBatchWithTemplateAPIPath = "email/batchWithTemplates"
 )
 
 // EmailService handles communication with the email related methods of the
@@ -59,7 +60,7 @@ type EmailResponse struct {
 // Send will build and execute request to send an email via the API.
 func (s *EmailService) Send(emailRequest *Email) (*EmailResponse, *Response, error) {
 	if emailRequest == nil {
-		return nil, nil, errors.New("The email request cannot be nil")
+		return nil, nil, errors.New("the email request cannot be nil")
 	}
 
 	// If we have a template ID, use the Postmark template API endpoint.
@@ -85,10 +86,34 @@ func (s *EmailService) Send(emailRequest *Email) (*EmailResponse, *Response, err
 // SendBatch will build and execute request to send batch emails via the API.
 func (s *EmailService) SendBatch(emailRequests []*Email) ([]*EmailResponse, *Response, error) {
 	if len(emailRequests) < 1 {
-		return nil, nil, errors.New("You must pass a minimum of one email to SendBatch()")
+		return nil, nil, errors.New("you must pass a minimum of one email to SendBatch()")
 	}
 
 	request, err := s.client.NewRequest("POST", emailBatchAPIPath, emailRequests)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	email := []*EmailResponse{}
+	response, err := s.client.Do(request, email)
+	if err != nil {
+		return nil, response, err
+	}
+
+	return email, response, nil
+}
+
+// SendBatchWithTemplates will build and execute request to send batch templated emails via the API.
+func (s *EmailService) SendBatchWithTemplates(emailRequests []*Email) ([]*EmailResponse, *Response, error) {
+	if len(emailRequests) < 1 {
+		return nil, nil, errors.New("you must pass a minimum of one email to SendBatchWithTemplates()")
+	}
+
+	formatEmails := map[string]interface{}{
+		"Messages": emailRequests,
+	}
+
+	request, err := s.client.NewRequest("POST", emailBatchWithTemplateAPIPath, formatEmails)
 	if err != nil {
 		return nil, nil, err
 	}

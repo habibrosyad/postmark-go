@@ -92,7 +92,7 @@ func (s *BounceService) GetBounces(bounceCount, bounceOffset int, parameters map
 
 	// Ensure our bounce count meets criteria.
 	if bounceCount > 500 {
-		return nil, nil, errors.New("The max number of bounces to return per request is 500")
+		return nil, nil, errors.New("the max number of bounces to return per request is 500")
 	}
 
 	// Construct query parameters.
